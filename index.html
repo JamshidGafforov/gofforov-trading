@@ -1,217 +1,118 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uz">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gofforov Trading Sessions</title>
+  <title>Gofforov Trading Platform</title>
 
   <style>
     * { box-sizing: border-box; }
-
     body {
       margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: system-ui, sans-serif;
       background: #050b12;
       color: #e6f1ff;
     }
-
     header {
       padding: 18px;
       text-align: center;
       font-size: 22px;
-      font-weight: 800;
+      font-weight: 700;
       background: #02070c;
       border-bottom: 1px solid #0b1a26;
-      letter-spacing: 0.5px;
     }
-
     .container {
-      max-width: 1200px;
+      max-width: 1100px;
       margin: auto;
-      padding: 20px;
+      padding: 16px;
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 20px;
+      gap: 16px;
     }
-
     .card {
-      background: linear-gradient(145deg, #020c14, #041826);
+      background: linear-gradient(145deg, #03121f, #020c14);
       border: 1px solid #0b1a26;
       border-radius: 18px;
-      padding: 22px;
-      box-shadow: 0 15px 35px rgba(0,0,0,.6);
+      padding: 18px;
+      box-shadow: 0 0 25px rgba(0,0,0,0.6);
     }
-
     h2 {
-      margin: 0 0 14px 0;
-      font-size: 18px;
+      margin: 0 0 12px 0;
+      font-size: 17px;
       color: #6fd2ff;
-      text-align: center;
     }
-
-    .session-row {
+    .trend {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin: 10px 0;
-      font-size: 20px;
-      font-weight: 600;
+      padding: 10px 0;
+      font-size: 16px;
+      border-bottom: 1px dashed #0b1a26;
     }
-
-    .status {
-      font-size: 15px;
-      font-weight: 500;
+    .trend:last-child { border-bottom: none; }
+    .up { color: #4ade80; font-weight: 700; }
+    .down { color: #f87171; font-weight: 700; }
+    .note {
+      margin-top: 12px;
+      font-size: 13px;
+      color: #7cff9c;
     }
-
-    .open { color: #4ade80; }
-    .closed { color: #f87171; }
-
-    iframe {
-      width: 100% !important;
-      border: none;
-      border-radius: 14px;
-    }
-
     footer {
       text-align: center;
-      padding: 16px;
+      padding: 14px;
       font-size: 13px;
       color: #7a93a8;
     }
   </style>
 </head>
+
 <body>
 
 <header>
-  GOFFOROV TRADING SESSIONS
+  Gofforov Trading Platform • Market Sessions & Trends
 </header>
 
 <div class="container">
 
-  <!-- MAIN SESSIONS -->
-  <div class="card" style="grid-column:1 / -1">
-    <h2>🌍 Global Trading Sessions (Live)</h2>
-
-    <div class="session-row"><span>🇺🇿 Uzbekistan (UTC+5)</span><span id="uz"></span></div>
-
-    <hr style="border-color:#0b1a26">
-
-    <div class="session-row"><span>🇯🇵 Tokyo</span><span id="tokyo"></span></div>
-    <div class="status" id="tokyoStatus"></div>
-
-    <hr style="border-color:#0b1a26">
-
-    <div class="session-row"><span>🇬🇧 London</span><span id="london"></span></div>
-    <div class="status" id="londonStatus"></div>
-
-    <hr style="border-color:#0b1a26">
-
-    <div class="session-row"><span>🇺🇸 New York</span><span id="ny"></span></div>
-    <div class="status" id="nyStatus"></div>
-
-    <hr style="border-color:#0b1a26">
-
-    <div class="session-row"><span>⚡ London – New York Overlap</span><span id="overlap"></span></div>
-  </div>
-
-  <!-- ECONOMIC CALENDAR -->
   <div class="card">
-    <h2>📅 Economic Calendar</h2>
-    <iframe src="https://www.tradingview.com/embed-widget/events/?locale=en" height="380"></iframe>
-  </div>
+    <h2>📈 Oltin • Neft • Kumush (Algoritmik Trend)</h2>
 
-  <!-- MARKET TREND (GOLD / OIL / SILVER) -->
-  <div class="card" style="grid-column:1 / -1">
-    <h2>📈 Gold • Oil • Silver Trend (Algorithmic)</h2>
-    <canvas id="trendChart" height="120"></canvas>
-    <p style="font-size:13px;color:#7cff9c;text-align:center">
-      Automatic trend direction based on moving average. Not a signal.
-    </p>
+    <div class="trend"><span>🟡 Gold</span><span id="gold"></span></div>
+    <div class="trend"><span>🛢 Oil</span><span id="oil"></span></div>
+    <div class="trend"><span>⚪ Silver</span><span id="silver"></span></div>
+
+    <div class="note">Harakatlanuvchi o‘rtacha qiymatga asoslangan trend yo‘nalishi. Signal emas.</div>
   </div>
 
 </div>
 
 <footer>
-  © Gofforov Trading • UTC+5 • Not financial advice
+  © Gofforov Trading • Educational purpose only
 </footer>
 
 <script>
-  function status(hour, start, end) {
-    return hour >= start && hour < end
-      ? '<span class="open">🟢 Open</span>'
-      : '<span class="closed">🔴 Closed</span>';
+  function calcTrend(data) {
+    const first = (data[0] + data[1] + data[2]) / 3;
+    const last = (data[3] + data[4] + data[5]) / 3;
+    return last > first ? 'up' : 'down';
   }
-
-  function update() {
-    const now = new Date();
-
-    const uz = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Tashkent' }));
-    const tokyo = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Tokyo' }));
-    const london = new Date(now.toLocaleString('en-US', { timeZone: 'Europe/London' }));
-    const ny = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
-
-    document.getElementById('uz').innerText = uz.toLocaleTimeString('en-GB');
-    document.getElementById('tokyo').innerText = tokyo.toLocaleTimeString('en-GB');
-    document.getElementById('london').innerText = london.toLocaleTimeString('en-GB');
-    document.getElementById('ny').innerText = ny.toLocaleTimeString('en-GB');
-
-    document.getElementById('tokyoStatus').innerHTML = status(tokyo.getHours(), 9, 18);
-    document.getElementById('londonStatus').innerHTML = status(london.getHours(), 8, 17);
-    document.getElementById('nyStatus').innerHTML = status(ny.getHours(), 8, 17);
-
-    const overlap = london.getHours() >= 13 && london.getHours() < 17 && ny.getHours() >= 8 && ny.getHours() < 12;
-    document.getElementById('overlap').innerHTML = overlap
-      ? '<span class="open">⚡ High Volatility</span>'
-      : '<span class="closed">—</span>';
-  }
-
-  setInterval(update, 1000);
-  update();
-  // ===== SIMPLE TREND ALGORITHM =====
-  const ctx = document.getElementById('trendChart').getContext('2d');
 
   const prices = {
-    gold: [2320,2330,2325,2340,2355,2360],
-    oil: [78,79,80,79.5,81,82],
-    silver: [28.1,28.3,28.2,28.6,28.9,29.1]
+    gold: [2320, 2330, 2325, 2340, 2355, 2360],
+    oil: [78, 77.5, 77, 78.2, 79, 79.4],
+    silver: [29.1, 29.0, 28.9, 29.3, 29.6, 29.8]
   };
 
-  function trend(data){
-    const first = data.slice(0,3).reduce((a,b)=>a+b)/3;
-    const last = data.slice(-3).reduce((a,b)=>a+b)/3;
-    return last > first ? 'UP' : 'DOWN';
+  function render() {
+    ['gold','oil','silver'].forEach(k => {
+      const t = calcTrend(prices[k]);
+      const el = document.getElementById(k);
+      el.className = t;
+      el.textContent = t === 'up' ? '▲ UP' : '▼ DOWN';
+    });
   }
 
-  new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: ['t1','t2','t3','t4','t5','t6'],
-      datasets: [
-        {
-          label: 'Gold ('+trend(prices.gold)+')',
-          data: prices.gold,
-          tension: 0.3
-        },
-        {
-          label: 'Oil ('+trend(prices.oil)+')',
-          data: prices.oil,
-          tension: 0.3
-        },
-        {
-          label: 'Silver ('+trend(prices.silver)+')',
-          data: prices.silver,
-          tension: 0.3
-        }
-      ]
-    },
-    options: {
-      plugins: { legend: { labels: { color:'#e6f1ff' } } },
-      scales: {
-        x: { ticks:{display:false}, grid:{display:false} },
-        y: { ticks:{color:'#7a93a8'}, grid:{color:'#0b1a26'} }
-      }
-    }
-  });
+  render();
 </script>
 
 </body>
