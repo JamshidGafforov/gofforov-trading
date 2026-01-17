@@ -6,6 +6,25 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<hr style="margin:40px 0;opacity:.2">
+
+<div class="card-3d">
+  <h2 id="sessionTitle">🕒 Trading Sessions</h2>
+
+  <div id="sessions"></div>
+</div>
+
+<br>
+
+<div class="card-3d">
+  <h2 id="calendarTitle">📅 Economic Calendar</h2>
+
+  <iframe
+    id="calendar"
+    src="https://www.tradingview.com/embed-widget/events/?locale=en"
+    style="height:420px">
+  </iframe>
+</div>
 
 <style>
 body {
@@ -114,3 +133,70 @@ updateChart();
 
 </body>
 </html>
+<script>
+function sessionStatus(hour, start, end) {
+  return hour >= start && hour < end ? "🟢 Open" : "🔴 Closed";
+}
+
+function updateSessions(lang) {
+  const now = new Date();
+
+  const zones = {
+    uz: ["Asia/Tashkent", 9, 18],
+    tokyo: ["Asia/Tokyo", 9, 18],
+    london: ["Europe/London", 8, 17],
+    ny: ["America/New_York", 8, 17]
+  };
+
+  const names = {
+    en: ["Uzbekistan","Tokyo","London","New York","Overlap"],
+    ru: ["Узбекистан","Токио","Лондон","Нью-Йорк","Перекрытие"],
+    uz: ["Oʻzbekiston","Tokio","London","New York","Overlap"],
+    ar: ["أوزبكستان","طوكيو","لندن","نيويورك","تداخل"]
+  };
+
+  let html = "";
+
+  let londonHour, nyHour;
+
+  Object.keys(zones).forEach((k,i)=>{
+    const d = new Date(now.toLocaleString("en-US",{timeZone:zones[k][0]}));
+    const h = d.getHours();
+    if(k==="london") londonHour=h;
+    if(k==="ny") nyHour=h;
+
+    html += `<div style="display:flex;justify-content:space-between;margin:6px 0">
+      <span>${names[lang][i]}</span>
+      <span>${d.toLocaleTimeString("en-GB")} • ${sessionStatus(h,zones[k][1],zones[k][2])}</span>
+    </div>`;
+  });
+
+  const overlap = londonHour>=13 && londonHour<17 && nyHour>=8 && nyHour<12;
+  html += `<div style="margin-top:8px;font-weight:bold">
+    ${names[lang][4]}: ${overlap ? "⚡ High volatility" : "—"}
+  </div>`;
+
+  document.getElementById("sessions").innerHTML = html;
+}
+
+const oldSetLang = setLang;
+setLang = function(lang){
+  oldSetLang(lang);
+  document.getElementById("calendar").src =
+    "https://www.tradingview.com/embed-widget/events/?locale=" + lang;
+
+  updateSessions(lang);
+
+  const titles = {
+    en:["🕒 Trading Sessions","📅 Economic Calendar"],
+    ru:["🕒 Торговые сессии","📅 Экономический календарь"],
+    uz:["🕒 Savdo sessiyalari","📅 Iqtisodiy kalender"],
+    ar:["🕒 جلسات التداول","📅 التقويم الاقتصادي"]
+  };
+
+  document.getElementById("sessionTitle").innerText = titles[lang][0];
+  document.getElementById("calendarTitle").innerText = titles[lang][1];
+};
+
+updateSessions("en");
+</script>
