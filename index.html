@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="uz">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gofforov Trading Dashboard</title>
+  <title>Gofforov Trading Sessions</title>
 
   <style>
     * { box-sizing: border-box; }
@@ -16,42 +16,51 @@
     }
 
     header {
-      padding: 16px;
+      padding: 18px;
       text-align: center;
-      font-size: 20px;
-      font-weight: 700;
+      font-size: 22px;
+      font-weight: 800;
       background: #02070c;
       border-bottom: 1px solid #0b1a26;
+      letter-spacing: 0.5px;
     }
 
     .container {
-      max-width: 1100px;
+      max-width: 1200px;
       margin: auto;
-      padding: 16px;
+      padding: 20px;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
     }
 
     .card {
-      background: #020c14;
+      background: linear-gradient(145deg, #020c14, #041826);
       border: 1px solid #0b1a26;
-      border-radius: 14px;
-      padding: 16px;
-      overflow: hidden;
+      border-radius: 18px;
+      padding: 22px;
+      box-shadow: 0 15px 35px rgba(0,0,0,.6);
     }
 
     h2 {
-      margin: 0 0 10px 0;
-      font-size: 16px;
+      margin: 0 0 14px 0;
+      font-size: 18px;
       color: #6fd2ff;
+      text-align: center;
     }
 
-    .row {
+    .session-row {
       display: flex;
       justify-content: space-between;
-      margin: 6px 0;
+      align-items: center;
+      margin: 10px 0;
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .status {
       font-size: 15px;
+      font-weight: 500;
     }
 
     .open { color: #4ade80; }
@@ -59,93 +68,63 @@
 
     iframe {
       width: 100% !important;
-      max-width: 100% !important;
       border: none;
-      border-radius: 10px;
+      border-radius: 14px;
     }
 
     footer {
       text-align: center;
-      padding: 14px;
+      padding: 16px;
       font-size: 13px;
       color: #7a93a8;
     }
   </style>
 </head>
-
 <body>
 
 <header>
-  Gofforov Trading • Global Dashboard
+  GOFFOROV TRADING SESSIONS
 </header>
 
 <div class="container">
 
-  <!-- MAIN TRADING SESSIONS -->
-  <div class="card" style="grid-column:1 / -1; padding:24px">
-    <h2 style="font-size:20px">🌍 Global Trading Sessions</h2>
+  <!-- MAIN SESSIONS -->
+  <div class="card" style="grid-column:1 / -1">
+    <h2>🌍 Global Trading Sessions (Live)</h2>
 
-    <div class="row" style="font-size:18px"><span>🇺🇿 Uzbekistan (UTC+5)</span><span id="uz"></span></div>
-
-    <hr style="border-color:#0b1a26">
-
-    <div class="row" style="font-size:18px"><span>🇯🇵 Tokyo</span><span id="tokyo"></span></div>
-    <div class="row"><span>Status</span><span id="tokyoStatus"></span></div>
+    <div class="session-row"><span>🇺🇿 Uzbekistan (UTC+5)</span><span id="uz"></span></div>
 
     <hr style="border-color:#0b1a26">
 
-    <div class="row" style="font-size:18px"><span>🇬🇧 London</span><span id="london"></span></div>
-    <div class="row"><span>Status</span><span id="londonStatus"></span></div>
+    <div class="session-row"><span>🇯🇵 Tokyo</span><span id="tokyo"></span></div>
+    <div class="status" id="tokyoStatus"></div>
 
     <hr style="border-color:#0b1a26">
 
-    <div class="row" style="font-size:18px"><span>🇺🇸 New York</span><span id="ny"></span></div>
-    <div class="row"><span>Status</span><span id="nyStatus"></span></div>
+    <div class="session-row"><span>🇬🇧 London</span><span id="london"></span></div>
+    <div class="status" id="londonStatus"></div>
 
     <hr style="border-color:#0b1a26">
 
-    <div class="row" style="font-size:18px"><span>⚡ London–NY Overlap</span><span id="overlap"></span></div>
+    <div class="session-row"><span>🇺🇸 New York</span><span id="ny"></span></div>
+    <div class="status" id="nyStatus"></div>
+
+    <hr style="border-color:#0b1a26">
+
+    <div class="session-row"><span>⚡ London – New York Overlap</span><span id="overlap"></span></div>
   </div>
 
   <!-- ECONOMIC CALENDAR -->
   <div class="card">
-    <h2>📅 Иқтисодий календар</h2>
-    <iframe src="https://www.tradingview.com/embed-widget/events/?locale=uz" height="380"></iframe>
+    <h2>📅 Economic Calendar</h2>
+    <iframe src="https://www.tradingview.com/embed-widget/events/?locale=en" height="380"></iframe>
   </div>
 
-  <!-- MARKET PRICES -->
+  <!-- MARKET WATCH -->
   <div class="card">
     <h2>📊 Gold • Oil • Silver</h2>
-    <iframe src="https://www.tradingview.com/embed-widget/market-quotes/?locale=uz" height="380"></iframe>
-    <p style="font-size:13px;color:#7cff9c">Маълумот учун. Сигнал эмас.</p>
-  </div>
-
-</div>
-    <div class="row"><span>🇯🇵 Токио</span><span id="tokyo"></span></div>
-    <div class="row"><span>🇬🇧 Лондон</span><span id="london"></span></div>
-    <div class="row"><span>🇺🇸 Нью-Йорк</span><span id="ny"></span></div>
-  </div>
-
-  <!-- SESSION STATUS -->
-  <div class="card">
-    <h2>🕒 Сессия ҳолати</h2>
-    <div class="row"><span>Tokyo</span><span id="tokyoStatus"></span></div>
-    <div class="row"><span>London</span><span id="londonStatus"></span></div>
-    <div class="row"><span>New York</span><span id="nyStatus"></span></div>
-    <div class="row"><span>Overlap</span><span id="overlap"></span></div>
-  </div>
-
-  <!-- ECONOMIC CALENDAR -->
-  <div class="card">
-    <h2>📅 Иқтисодий календар</h2>
-    <iframe src="https://www.tradingview.com/embed-widget/events/?locale=uz" height="380"></iframe>
-  </div>
-
-  <!-- MARKET PRICES -->
-  <div class="card">
-    <h2>📊 Gold • Oil • Silver</h2>
-    <iframe src="https://www.tradingview.com/embed-widget/market-quotes/?locale=uz" height="380"></iframe>
-    <p style="font-size:13px;color:#7cff9c">Маълумот учун. Сигнал эмас.</p>
+    <iframe src="https://www.tradingview.com/embed-widget/market-quotes/?locale=en" height="380"></iframe>
+    <p style="font-size:13px;color:#7cff9c;text-align:center">Information only. Not a signal.</p>
   </div>
 
 </div>
@@ -157,8 +136,8 @@
 <script>
   function status(hour, start, end) {
     return hour >= start && hour < end
-      ? '<span class="open">🟢 очиқ</span>'
-      : '<span class="closed">🔴 ёпиқ</span>';
+      ? '<span class="open">🟢 Open</span>'
+      : '<span class="closed">🔴 Closed</span>';
   }
 
   function update() {
@@ -169,15 +148,10 @@
     const london = new Date(now.toLocaleString('en-US', { timeZone: 'Europe/London' }));
     const ny = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
 
-    uzEl = document.getElementById('uz');
-    tokyoEl = document.getElementById('tokyo');
-    londonEl = document.getElementById('london');
-    nyEl = document.getElementById('ny');
-
-    uzEl.innerText = uz.toLocaleTimeString('en-GB');
-    tokyoEl.innerText = tokyo.toLocaleTimeString('en-GB');
-    londonEl.innerText = london.toLocaleTimeString('en-GB');
-    nyEl.innerText = ny.toLocaleTimeString('en-GB');
+    document.getElementById('uz').innerText = uz.toLocaleTimeString('en-GB');
+    document.getElementById('tokyo').innerText = tokyo.toLocaleTimeString('en-GB');
+    document.getElementById('london').innerText = london.toLocaleTimeString('en-GB');
+    document.getElementById('ny').innerText = ny.toLocaleTimeString('en-GB');
 
     document.getElementById('tokyoStatus').innerHTML = status(tokyo.getHours(), 9, 18);
     document.getElementById('londonStatus').innerHTML = status(london.getHours(), 8, 17);
@@ -185,7 +159,7 @@
 
     const overlap = london.getHours() >= 13 && london.getHours() < 17 && ny.getHours() >= 8 && ny.getHours() < 12;
     document.getElementById('overlap').innerHTML = overlap
-      ? '<span class="open">⚡ High volatility</span>'
+      ? '<span class="open">⚡ High Volatility</span>'
       : '<span class="closed">—</span>';
   }
 
