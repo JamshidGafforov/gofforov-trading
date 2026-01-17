@@ -2,201 +2,216 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Gofforov Trading</title>
+<title>Gofforov Trade Hub</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<hr style="margin:40px 0;opacity:.2">
-
-<div class="card-3d">
-  <h2 id="sessionTitle">🕒 Trading Sessions</h2>
-
-  <div id="sessions"></div>
-</div>
-
-<br>
-
-<div class="card-3d">
-  <h2 id="calendarTitle">📅 Economic Calendar</h2>
-
-  <iframe
-    id="calendar"
-    src="https://www.tradingview.com/embed-widget/events/?locale=en"
-    style="height:420px">
-  </iframe>
-</div>
 
 <style>
 body {
-  background: #0b1220;
-  color: #fff;
-  font-family: Arial, sans-serif;
   margin: 0;
+  font-family: Arial, sans-serif;
+  background: #0b1220;
+  color: #eaf2ff;
+}
+
+header {
+  padding: 18px;
+  text-align: center;
+  font-size: 26px;
+  font-weight: bold;
+  background: #020817;
+  border-bottom: 1px solid #1e2a44;
+}
+
+.lang {
+  text-align: center;
+  padding: 10px;
+}
+.lang button {
+  margin: 4px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  background: #1e2a44;
+  color: #fff;
+}
+
+.wrapper {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 20px;
   padding: 20px;
 }
 
-select {
-  padding: 6px;
-  margin-bottom: 15px;
-}
-
-.card-3d {
-  background: linear-gradient(145deg, #121c2f, #0a1020);
+.section {
+  background: linear-gradient(145deg,#0f1c33,#0a1326);
   border-radius: 16px;
-  padding: 20px;
-  box-shadow:
-    0 10px 25px rgba(0,0,0,0.6),
-    inset 0 0 10px rgba(255,255,255,0.05);
-  max-width: 600px;
-  margin: auto;
+  padding: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.6);
+  margin-bottom: 20px;
 }
 
 h2 {
-  text-align: center;
-  margin-bottom: 15px;
+  margin-top: 0;
+  font-size: 18px;
+  color: #7dd3fc;
+}
+
+iframe {
+  width: 100%;
+  border: none;
+  border-radius: 10px;
+}
+
+canvas {
+  max-height: 320px;
+}
+
+input, textarea {
+  width: 100%;
+  margin: 6px 0;
+  padding: 6px;
+  border-radius: 6px;
+  border: none;
+}
+
+button.save {
+  width: 100%;
+  padding: 8px;
+  background: #22c55e;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+}
+
+@media(max-width:900px){
+  .wrapper {
+    grid-template-columns: 1fr;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<select id="lang" onchange="updateChart()">
-  <option value="en">English</option>
-  <option value="ru">Русский</option>
-  <option value="uz">O‘zbek</option>
-  <option value="ar">العربية</option>
-</select>
+<header>GOFFOROV TRADE HUB</header>
 
-<div class="card-3d">
-  <h2 id="title">Market Indices</h2>
-  <canvas id="marketChart"></canvas>
+<div class="lang">
+  <button onclick="setLanguage('en')">EN</button>
+  <button onclick="setLanguage('ru')">RU</button>
+  <button onclick="setLanguage('uz')">UZ</button>
+  <button onclick="setLanguage('ar')">AR</button>
+</div>
+
+<div class="wrapper">
+
+<!-- LEFT SIDE -->
+<div>
+
+  <div class="section">
+    <h2 id="sessionsTitle">Trading Sessions</h2>
+    <div id="sessions"></div>
+  </div>
+
+  <div class="section">
+    <h2 id="calendarTitle">Economic Calendar</h2>
+    <iframe id="calendar" height="360"
+      src="https://www.tradingview.com/embed-widget/events/?locale=en">
+    </iframe>
+  </div>
+
+</div>
+
+<!-- RIGHT SIDE -->
+<div>
+
+  <div class="section">
+    <h2 id="marketTitle">Market Indices</h2>
+    <canvas id="marketChart"></canvas>
+  </div>
+
+  <div class="section">
+    <h2 id="journalTitle">Trader Journal</h2>
+    <input id="pair" placeholder="Pair (XAUUSD)">
+    <input id="entry" placeholder="Entry">
+    <input id="exit" placeholder="Exit">
+    <textarea id="reason" placeholder="Reason"></textarea>
+    <button class="save" onclick="saveTrade()">SAVE TRADE</button>
+    <div id="journal"></div>
+  </div>
+
+</div>
 </div>
 
 <script>
+let currentLang="en";
 let chart;
 
-const translations = {
-  en: {
-    title: "Market Indices",
-    labels: ["S&P 500", "NASDAQ 100", "Dow Jones", "DAX", "FTSE 100"]
-  },
-  ru: {
-    title: "Рыночные индексы",
-    labels: ["S&P 500", "NASDAQ 100", "Dow Jones", "DAX", "FTSE 100"]
-  },
-  uz: {
-    title: "Bozor indekslari",
-    labels: ["S&P 500", "NASDAQ 100", "Dow Jones", "DAX", "FTSE 100"]
-  },
-  ar: {
-    title: "مؤشرات السوق",
-    labels: ["S&P 500", "NASDAQ 100", "داو جونز", "DAX", "FTSE 100"]
-  }
+const text={
+en:{sessions:"Trading Sessions",calendar:"Economic Calendar",market:"Market Indices",journal:"Trader Journal"},
+ru:{sessions:"Торговые сессии",calendar:"Экономический календарь",market:"Рыночные индексы",journal:"Трейдерский журнал"},
+uz:{sessions:"Savdo sessiyalari",calendar:"Iqtisodiy kalender",market:"Bozor indekslari",journal:"Trader jurnali"},
+ar:{sessions:"جلسات التداول",calendar:"التقويم الاقتصادي",market:"مؤشرات السوق",journal:"سجل المتداول"}
 };
 
-const values = [6942, 25525, 49366, 25297, 10254];
+function setLanguage(l){
+currentLang=l;
+document.getElementById("sessionsTitle").innerText=text[l].sessions;
+document.getElementById("calendarTitle").innerText=text[l].calendar;
+document.getElementById("marketTitle").innerText=text[l].market;
+document.getElementById("journalTitle").innerText=text[l].journal;
+document.getElementById("calendar").src="https://www.tradingview.com/embed-widget/events/?locale="+l;
+updateChart();
+updateSessions();
+}
 
-function updateChart() {
-  const lang = document.getElementById("lang").value;
-  document.getElementById("title").innerText = translations[lang].title;
+function updateSessions(){
+const zones=[
+["Asia/Tashkent","UZ"],
+["Asia/Tokyo","Tokyo"],
+["Europe/London","London"],
+["America/New_York","New York"]
+];
+let html="";
+zones.forEach(z=>{
+let d=new Date(new Date().toLocaleString("en-US",{timeZone:z[0]}));
+html+=`<div>${z[1]}: ${d.toLocaleTimeString()}</div>`;
+});
+document.getElementById("sessions").innerHTML=html;
+}
 
-  if (chart) chart.destroy();
+function updateChart(){
+if(chart)chart.destroy();
+chart=new Chart(document.getElementById("marketChart"),{
+type:"bar",
+data:{
+labels:["S&P 500","NASDAQ","DAX","FTSE"],
+datasets:[{data:[4800,16200,16500,7600],backgroundColor:"#38bdf8"}]
+},
+options:{responsive:true,plugins:{legend:{display:false}}}
+});
+}
 
-  chart = new Chart(document.getElementById("marketChart"), {
-    type: "bar",
-    data: {
-      labels: translations[lang].labels,
-      datasets: [{
-        data: values,
-        backgroundColor: "#3b82f6"
-      }]
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { display: false }
-      },
-      scales: {
-        x: {
-          ticks: { color: "#fff" }
-        },
-        y: {
-          ticks: { color: "#fff" }
-        }
-      }
-    }
-  });
+function saveTrade(){
+let trades=JSON.parse(localStorage.getItem("trades")||"[]");
+trades.push({
+pair:pair.value,entry:entry.value,exit:exit.value,reason:reason.value
+});
+localStorage.setItem("trades",JSON.stringify(trades));
+loadJournal();
+}
+
+function loadJournal(){
+let trades=JSON.parse(localStorage.getItem("trades")||"[]");
+journal.innerHTML=trades.map(t=>`<div>${t.pair} | ${t.entry} → ${t.exit}</div>`).join("");
 }
 
 updateChart();
+updateSessions();
+loadJournal();
 </script>
 
 </body>
 </html>
-<script>
-function sessionStatus(hour, start, end) {
-  return hour >= start && hour < end ? "🟢 Open" : "🔴 Closed";
-}
-
-function updateSessions(lang) {
-  const now = new Date();
-
-  const zones = {
-    uz: ["Asia/Tashkent", 9, 18],
-    tokyo: ["Asia/Tokyo", 9, 18],
-    london: ["Europe/London", 8, 17],
-    ny: ["America/New_York", 8, 17]
-  };
-
-  const names = {
-    en: ["Uzbekistan","Tokyo","London","New York","Overlap"],
-    ru: ["Узбекистан","Токио","Лондон","Нью-Йорк","Перекрытие"],
-    uz: ["Oʻzbekiston","Tokio","London","New York","Overlap"],
-    ar: ["أوزبكستان","طوكيو","لندن","نيويورك","تداخل"]
-  };
-
-  let html = "";
-
-  let londonHour, nyHour;
-
-  Object.keys(zones).forEach((k,i)=>{
-    const d = new Date(now.toLocaleString("en-US",{timeZone:zones[k][0]}));
-    const h = d.getHours();
-    if(k==="london") londonHour=h;
-    if(k==="ny") nyHour=h;
-
-    html += `<div style="display:flex;justify-content:space-between;margin:6px 0">
-      <span>${names[lang][i]}</span>
-      <span>${d.toLocaleTimeString("en-GB")} • ${sessionStatus(h,zones[k][1],zones[k][2])}</span>
-    </div>`;
-  });
-
-  const overlap = londonHour>=13 && londonHour<17 && nyHour>=8 && nyHour<12;
-  html += `<div style="margin-top:8px;font-weight:bold">
-    ${names[lang][4]}: ${overlap ? "⚡ High volatility" : "—"}
-  </div>`;
-
-  document.getElementById("sessions").innerHTML = html;
-}
-
-const oldSetLang = setLang;
-setLang = function(lang){
-  oldSetLang(lang);
-  document.getElementById("calendar").src =
-    "https://www.tradingview.com/embed-widget/events/?locale=" + lang;
-
-  updateSessions(lang);
-
-  const titles = {
-    en:["🕒 Trading Sessions","📅 Economic Calendar"],
-    ru:["🕒 Торговые сессии","📅 Экономический календарь"],
-    uz:["🕒 Savdo sessiyalari","📅 Iqtisodiy kalender"],
-    ar:["🕒 جلسات التداول","📅 التقويم الاقتصادي"]
-  };
-
-  document.getElementById("sessionTitle").innerText = titles[lang][0];
-  document.getElementById("calendarTitle").innerText = titles[lang][1];
-};
-
-updateSessions("en");
-</script>
