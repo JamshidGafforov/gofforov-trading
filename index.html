@@ -1,216 +1,196 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uz">
 <head>
-<meta charset="UTF-8">
-<title>Gofforov Trade Hub</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gofforov Trading Dashboard</title>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    * { box-sizing: border-box; }
 
-<style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #0b1220;
-  color: #eaf2ff;
-}
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #050b12;
+      color: #e6f1ff;
+    }
 
-header {
-  padding: 18px;
-  text-align: center;
-  font-size: 26px;
-  font-weight: bold;
-  background: #020817;
-  border-bottom: 1px solid #1e2a44;
-}
+    header {
+      padding: 16px;
+      text-align: center;
+      font-size: 20px;
+      font-weight: 700;
+      background: #02070c;
+      border-bottom: 1px solid #0b1a26;
+    }
 
-.lang {
-  text-align: center;
-  padding: 10px;
-}
-.lang button {
-  margin: 4px;
-  padding: 6px 12px;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  background: #1e2a44;
-  color: #fff;
-}
+    .container {
+      max-width: 1100px;
+      margin: auto;
+      padding: 16px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
 
-.wrapper {
-  display: grid;
-  grid-template-columns: 320px 1fr;
-  gap: 20px;
-  padding: 20px;
-}
+    .card {
+      background: #020c14;
+      border: 1px solid #0b1a26;
+      border-radius: 14px;
+      padding: 16px;
+      overflow: hidden;
+    }
 
-.section {
-  background: linear-gradient(145deg,#0f1c33,#0a1326);
-  border-radius: 16px;
-  padding: 16px;
-  box-shadow: 0 10px 30px rgba(0,0,0,.6);
-  margin-bottom: 20px;
-}
+    h2 {
+      margin: 0 0 10px 0;
+      font-size: 16px;
+      color: #6fd2ff;
+    }
 
-h2 {
-  margin-top: 0;
-  font-size: 18px;
-  color: #7dd3fc;
-}
+    .row {
+      display: flex;
+      justify-content: space-between;
+      margin: 6px 0;
+      font-size: 15px;
+    }
 
-iframe {
-  width: 100%;
-  border: none;
-  border-radius: 10px;
-}
+    .open { color: #4ade80; }
+    .closed { color: #f87171; }
 
-canvas {
-  max-height: 320px;
-}
+    iframe {
+      width: 100% !important;
+      max-width: 100% !important;
+      border: none;
+      border-radius: 10px;
+    }
 
-input, textarea {
-  width: 100%;
-  margin: 6px 0;
-  padding: 6px;
-  border-radius: 6px;
-  border: none;
-}
-
-button.save {
-  width: 100%;
-  padding: 8px;
-  background: #22c55e;
-  border: none;
-  border-radius: 6px;
-  font-weight: bold;
-}
-
-@media(max-width:900px){
-  .wrapper {
-    grid-template-columns: 1fr;
-  }
-}
-</style>
+    footer {
+      text-align: center;
+      padding: 14px;
+      font-size: 13px;
+      color: #7a93a8;
+    }
+  </style>
 </head>
 
 <body>
 
-<header>GOFFOROV TRADE HUB</header>
+<header>
+  Gofforov Trading • Global Dashboard
+</header>
 
-<div class="lang">
-  <button onclick="setLanguage('en')">EN</button>
-  <button onclick="setLanguage('ru')">RU</button>
-  <button onclick="setLanguage('uz')">UZ</button>
-  <button onclick="setLanguage('ar')">AR</button>
-</div>
+<div class="container">
 
-<div class="wrapper">
+  <!-- MAIN TRADING SESSIONS -->
+  <div class="card" style="grid-column:1 / -1; padding:24px">
+    <h2 style="font-size:20px">🌍 Global Trading Sessions</h2>
 
-<!-- LEFT SIDE -->
-<div>
+    <div class="row" style="font-size:18px"><span>🇺🇿 Uzbekistan (UTC+5)</span><span id="uz"></span></div>
 
-  <div class="section">
-    <h2 id="sessionsTitle">Trading Sessions</h2>
-    <div id="sessions"></div>
+    <hr style="border-color:#0b1a26">
+
+    <div class="row" style="font-size:18px"><span>🇯🇵 Tokyo</span><span id="tokyo"></span></div>
+    <div class="row"><span>Status</span><span id="tokyoStatus"></span></div>
+
+    <hr style="border-color:#0b1a26">
+
+    <div class="row" style="font-size:18px"><span>🇬🇧 London</span><span id="london"></span></div>
+    <div class="row"><span>Status</span><span id="londonStatus"></span></div>
+
+    <hr style="border-color:#0b1a26">
+
+    <div class="row" style="font-size:18px"><span>🇺🇸 New York</span><span id="ny"></span></div>
+    <div class="row"><span>Status</span><span id="nyStatus"></span></div>
+
+    <hr style="border-color:#0b1a26">
+
+    <div class="row" style="font-size:18px"><span>⚡ London–NY Overlap</span><span id="overlap"></span></div>
   </div>
 
-  <div class="section">
-    <h2 id="calendarTitle">Economic Calendar</h2>
-    <iframe id="calendar" height="360"
-      src="https://www.tradingview.com/embed-widget/events/?locale=en">
-    </iframe>
+  <!-- ECONOMIC CALENDAR -->
+  <div class="card">
+    <h2>📅 Иқтисодий календар</h2>
+    <iframe src="https://www.tradingview.com/embed-widget/events/?locale=uz" height="380"></iframe>
+  </div>
+
+  <!-- MARKET PRICES -->
+  <div class="card">
+    <h2>📊 Gold • Oil • Silver</h2>
+    <iframe src="https://www.tradingview.com/embed-widget/market-quotes/?locale=uz" height="380"></iframe>
+    <p style="font-size:13px;color:#7cff9c">Маълумот учун. Сигнал эмас.</p>
+  </div>
+
+</div>
+    <div class="row"><span>🇯🇵 Токио</span><span id="tokyo"></span></div>
+    <div class="row"><span>🇬🇧 Лондон</span><span id="london"></span></div>
+    <div class="row"><span>🇺🇸 Нью-Йорк</span><span id="ny"></span></div>
+  </div>
+
+  <!-- SESSION STATUS -->
+  <div class="card">
+    <h2>🕒 Сессия ҳолати</h2>
+    <div class="row"><span>Tokyo</span><span id="tokyoStatus"></span></div>
+    <div class="row"><span>London</span><span id="londonStatus"></span></div>
+    <div class="row"><span>New York</span><span id="nyStatus"></span></div>
+    <div class="row"><span>Overlap</span><span id="overlap"></span></div>
+  </div>
+
+  <!-- ECONOMIC CALENDAR -->
+  <div class="card">
+    <h2>📅 Иқтисодий календар</h2>
+    <iframe src="https://www.tradingview.com/embed-widget/events/?locale=uz" height="380"></iframe>
+  </div>
+
+  <!-- MARKET PRICES -->
+  <div class="card">
+    <h2>📊 Gold • Oil • Silver</h2>
+    <iframe src="https://www.tradingview.com/embed-widget/market-quotes/?locale=uz" height="380"></iframe>
+    <p style="font-size:13px;color:#7cff9c">Маълумот учун. Сигнал эмас.</p>
   </div>
 
 </div>
 
-<!-- RIGHT SIDE -->
-<div>
-
-  <div class="section">
-    <h2 id="marketTitle">Market Indices</h2>
-    <canvas id="marketChart"></canvas>
-  </div>
-
-  <div class="section">
-    <h2 id="journalTitle">Trader Journal</h2>
-    <input id="pair" placeholder="Pair (XAUUSD)">
-    <input id="entry" placeholder="Entry">
-    <input id="exit" placeholder="Exit">
-    <textarea id="reason" placeholder="Reason"></textarea>
-    <button class="save" onclick="saveTrade()">SAVE TRADE</button>
-    <div id="journal"></div>
-  </div>
-
-</div>
-</div>
+<footer>
+  © Gofforov Trading • UTC+5 • Not financial advice
+</footer>
 
 <script>
-let currentLang="en";
-let chart;
+  function status(hour, start, end) {
+    return hour >= start && hour < end
+      ? '<span class="open">🟢 очиқ</span>'
+      : '<span class="closed">🔴 ёпиқ</span>';
+  }
 
-const text={
-en:{sessions:"Trading Sessions",calendar:"Economic Calendar",market:"Market Indices",journal:"Trader Journal"},
-ru:{sessions:"Торговые сессии",calendar:"Экономический календарь",market:"Рыночные индексы",journal:"Трейдерский журнал"},
-uz:{sessions:"Savdo sessiyalari",calendar:"Iqtisodiy kalender",market:"Bozor indekslari",journal:"Trader jurnali"},
-ar:{sessions:"جلسات التداول",calendar:"التقويم الاقتصادي",market:"مؤشرات السوق",journal:"سجل المتداول"}
-};
+  function update() {
+    const now = new Date();
 
-function setLanguage(l){
-currentLang=l;
-document.getElementById("sessionsTitle").innerText=text[l].sessions;
-document.getElementById("calendarTitle").innerText=text[l].calendar;
-document.getElementById("marketTitle").innerText=text[l].market;
-document.getElementById("journalTitle").innerText=text[l].journal;
-document.getElementById("calendar").src="https://www.tradingview.com/embed-widget/events/?locale="+l;
-updateChart();
-updateSessions();
-}
+    const uz = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Tashkent' }));
+    const tokyo = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Tokyo' }));
+    const london = new Date(now.toLocaleString('en-US', { timeZone: 'Europe/London' }));
+    const ny = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
 
-function updateSessions(){
-const zones=[
-["Asia/Tashkent","UZ"],
-["Asia/Tokyo","Tokyo"],
-["Europe/London","London"],
-["America/New_York","New York"]
-];
-let html="";
-zones.forEach(z=>{
-let d=new Date(new Date().toLocaleString("en-US",{timeZone:z[0]}));
-html+=`<div>${z[1]}: ${d.toLocaleTimeString()}</div>`;
-});
-document.getElementById("sessions").innerHTML=html;
-}
+    uzEl = document.getElementById('uz');
+    tokyoEl = document.getElementById('tokyo');
+    londonEl = document.getElementById('london');
+    nyEl = document.getElementById('ny');
 
-function updateChart(){
-if(chart)chart.destroy();
-chart=new Chart(document.getElementById("marketChart"),{
-type:"bar",
-data:{
-labels:["S&P 500","NASDAQ","DAX","FTSE"],
-datasets:[{data:[4800,16200,16500,7600],backgroundColor:"#38bdf8"}]
-},
-options:{responsive:true,plugins:{legend:{display:false}}}
-});
-}
+    uzEl.innerText = uz.toLocaleTimeString('en-GB');
+    tokyoEl.innerText = tokyo.toLocaleTimeString('en-GB');
+    londonEl.innerText = london.toLocaleTimeString('en-GB');
+    nyEl.innerText = ny.toLocaleTimeString('en-GB');
 
-function saveTrade(){
-let trades=JSON.parse(localStorage.getItem("trades")||"[]");
-trades.push({
-pair:pair.value,entry:entry.value,exit:exit.value,reason:reason.value
-});
-localStorage.setItem("trades",JSON.stringify(trades));
-loadJournal();
-}
+    document.getElementById('tokyoStatus').innerHTML = status(tokyo.getHours(), 9, 18);
+    document.getElementById('londonStatus').innerHTML = status(london.getHours(), 8, 17);
+    document.getElementById('nyStatus').innerHTML = status(ny.getHours(), 8, 17);
 
-function loadJournal(){
-let trades=JSON.parse(localStorage.getItem("trades")||"[]");
-journal.innerHTML=trades.map(t=>`<div>${t.pair} | ${t.entry} → ${t.exit}</div>`).join("");
-}
+    const overlap = london.getHours() >= 13 && london.getHours() < 17 && ny.getHours() >= 8 && ny.getHours() < 12;
+    document.getElementById('overlap').innerHTML = overlap
+      ? '<span class="open">⚡ High volatility</span>'
+      : '<span class="closed">—</span>';
+  }
 
-updateChart();
-updateSessions();
-loadJournal();
+  setInterval(update, 1000);
+  update();
 </script>
 
 </body>
