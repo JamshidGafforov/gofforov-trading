@@ -1,109 +1,116 @@
 <!DOCTYPE html>
-<html lang="uz">
+<html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Gofforov Trading Dashboard</title>
+<meta charset="UTF-8">
+<title>Gofforov Trading</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
 body {
-  margin: 0;
-  background: radial-gradient(circle at top, #0f2027, #000);
-  font-family: Arial, sans-serif;
-  color: #e8f1ff;
-}
-
-/* Language buttons */
-.lang {
-  text-align: center;
-  padding: 14px;
-}
-.lang button {
-  margin: 4px;
-  padding: 8px 14px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  background: #1f3b52;
+  background: #0b1220;
   color: #fff;
-  font-weight: bold;
-}
-.lang button:hover {
-  background: #00c6ff;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
 }
 
-/* 3D Card */
-.card {
-  max-width: 960px;
-  margin: 20px auto;
-  padding: 18px;
-  background: linear-gradient(145deg, #0b1d2a, #122f44);
-  border-radius: 18px;
+select {
+  padding: 6px;
+  margin-bottom: 15px;
+}
+
+.card-3d {
+  background: linear-gradient(145deg, #121c2f, #0a1020);
+  border-radius: 16px;
+  padding: 20px;
   box-shadow:
-    0 20px 40px rgba(0,0,0,0.7),
-    inset 0 1px 1px rgba(255,255,255,0.1);
+    0 10px 25px rgba(0,0,0,0.6),
+    inset 0 0 10px rgba(255,255,255,0.05);
+  max-width: 600px;
+  margin: auto;
 }
 
 h2 {
   text-align: center;
-  margin-bottom: 10px;
-}
-
-iframe {
-  width: 100%;
-  height: 430px;
-  border: none;
-  border-radius: 12px;
-}
-.note {
-  font-size: 13px;
-  text-align: center;
-  color: #7cff9c;
-  margin-top: 6px;
+  margin-bottom: 15px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="lang">
-  <button onclick="setLang('uz')">UZ</button>
-  <button onclick="setLang('ru')">RU</button>
-  <button onclick="setLang('en')">EN</button>
-  <button onclick="setLang('ar')">AR</button>
-</div>
+<select id="lang" onchange="updateChart()">
+  <option value="en">English</option>
+  <option value="ru">Русский</option>
+  <option value="uz">O‘zbek</option>
+  <option value="ar">العربية</option>
+</select>
 
-<div class="card">
-  <h2 id="title">📊 Gold • Oil • Silver • Indices</h2>
-
-  <iframe id="tv"
-    src="https://www.tradingview.com/embed-widget/market-quotes/?locale=uz&symbols=XAUUSD,XAGUSD,WTI,UKOIL,SPX,DAX,FTSE100,JP225">
-  </iframe>
-
-  <div class="note" id="note">
-    Маълумот учун. Сигнал эмас.
-  </div>
+<div class="card-3d">
+  <h2 id="title">Market Indices</h2>
+  <canvas id="marketChart"></canvas>
 </div>
 
 <script>
-function setLang(lang) {
-  const texts = {
-    uz: ["📊 Gold • Oil • Silver • Indices", "Маълумот учун. Сигнал эмас."],
-    ru: ["📊 Золото • Нефть • Серебро • Индексы", "Информация. Не сигнал."],
-    en: ["📊 Gold • Oil • Silver • Indices", "For information only. Not a signal."],
-    ar: ["📊 الذهب • النفط • الفضة • المؤشرات", "للمعلومات فقط. ليست إشارة."]
-  };
+let chart;
 
-  document.getElementById("title").innerText = texts[lang][0];
-  document.getElementById("note").innerText = texts[lang][1];
+const translations = {
+  en: {
+    title: "Market Indices",
+    labels: ["S&P 500", "NASDAQ 100", "Dow Jones", "DAX", "FTSE 100"]
+  },
+  ru: {
+    title: "Рыночные индексы",
+    labels: ["S&P 500", "NASDAQ 100", "Dow Jones", "DAX", "FTSE 100"]
+  },
+  uz: {
+    title: "Bozor indekslari",
+    labels: ["S&P 500", "NASDAQ 100", "Dow Jones", "DAX", "FTSE 100"]
+  },
+  ar: {
+    title: "مؤشرات السوق",
+    labels: ["S&P 500", "NASDAQ 100", "داو جونز", "DAX", "FTSE 100"]
+  }
+};
 
-  document.getElementById("tv").src =
-    "https://www.tradingview.com/embed-widget/market-quotes/?locale=" +
-    lang +
-    "&symbols=XAUUSD,XAGUSD,WTI,UKOIL,SPX,DAX,FTSE100,JP225";
+const values = [6942, 25525, 49366, 25297, 10254];
+
+function updateChart() {
+  const lang = document.getElementById("lang").value;
+  document.getElementById("title").innerText = translations[lang].title;
+
+  if (chart) chart.destroy();
+
+  chart = new Chart(document.getElementById("marketChart"), {
+    type: "bar",
+    data: {
+      labels: translations[lang].labels,
+      datasets: [{
+        data: values,
+        backgroundColor: "#3b82f6"
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false }
+      },
+      scales: {
+        x: {
+          ticks: { color: "#fff" }
+        },
+        y: {
+          ticks: { color: "#fff" }
+        }
+      }
+    }
+  });
 }
+
+updateChart();
 </script>
 
 </body>
 </html>
-
