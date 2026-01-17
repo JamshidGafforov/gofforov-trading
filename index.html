@@ -1,103 +1,12 @@
+Gofforov Trading Dashboard body { margin: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif; background: radial-gradient(circle at top, #0f2027, #000000 60%); color: #e5f4ff; } header { padding: 20px; text-align: center; font-size: 22px; font-weight: 700; letter-spacing: 1px; background: linear-gradient(90deg, #061a24, #02080c); } .container { max-width: 1100px; margin: auto; padding: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; } .card { background: linear-gradient(180deg, #081e2b, #020a10); border-radius: 18px; padding: 20px; box-shadow: 0 0 40px rgba(0,255,255,0.08); border: 1px solid rgba(0,255,255,0.12); } .card h2 { margin-top: 0; font-size: 18px; color: #6fe6ff; } .clock { font-size: 20px; font-weight: 600; margin: 8px 0; display: flex; justify-content: space-between; } footer { text-align: center; padding: 16px; font-size: 13px; color: #6a8a9e; } Gofforov Trading • Global Sessions Dashboard 
+<div class="card"> <h2>🌍 Дунё вақти & Сессия ҳолати (Live)</h2> <div class="clock"><span>🇺🇿 Ўзбекистон</span><span id="uz"></span></div> <div class="clock"><span>🇯🇵 Токио</span><span id="tokyo"></span><span id="tokyoStatus"></span></div> <div class="clock"><span>🇬🇧 Лондон</span><span id="london"></span><span id="londonStatus"></span></div> <div class="clock"><span>🇺🇸 Нью-Йорк</span><span id="ny"></span><span id="nyStatus"></span></div> 
+🇬🇧 Лондон
+🇺🇸 Нью-Йорк
+🇯🇵 Токио
+<div class="card"> <h2>⚡ Сессия кучи (Live)</h2> <p id="overlapStatus">London–New York overlap: ...</p> <p id="countdown">Keyingi сессияга қолди: ...</p> <div class="card"> <h2>📊 Live бозор нархлари</h2> <iframe src="https://www.tradingview.com/embed-widget/market-quotes/?locale=uz" style="width:100%;height:420px;border:none;"></iframe> <p style="color:#7cff9c">Маълумот учун. Сигнал эмас.</p> 
+📰 Янгиликлар
+Forex • Gold • Oil • Silver
+Live янгиланиш (кейинги босқич)
+<div class="card"> <h2>📅 Иқтисодий календар</h2> <p>Муҳим иқтисодий воқеалар автоматик кўрсатилади</p> <iframe src="https://www.tradingview.com/embed-widget/events/?locale=uz" style="width:100%;height:400px;border:none;"></iframe> </div> © Gofforov Trading • UZT (UTC+5) function updateClocks() { const now = new Date(); document.getElementById('uz').innerText = now.toLocaleTimeString('en-GB', { timeZone: 'Asia/Tashkent' }); document.getElementById('london').innerText = now.toLocaleTimeString('en-GB', { timeZone: 'Europe/London' }); document.getElementById('ny').innerText = now.toLocaleTimeString('en-GB', { timeZone: 'America/New_York' }); document.getElementById('tokyo').innerText = now.toLocaleTimeString('en-GB', { timeZone: 'Asia/Tokyo' }); } function sessionStatus(time, start, end) { return (time >= start && time < end) ? '🟢 очиқ' : '🔴 ёпиқ'; } function updateClocks() { const now = new Date(); const uz = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Tashkent' })); const london = new Date(now.toLocaleString('en-US', { timeZone: 'Europe/London' })); const ny = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' })); const tokyo = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Tokyo' })); document.getElementById('uz').innerText = uz.toLocaleTimeString('en-GB'); document.getElementById('london').innerText = london.toLocaleTimeString('en-GB'); document.getElementById('ny').innerText = ny.toLocaleTimeString('en-GB'); document.getElementById('tokyo').innerText = tokyo.toLocaleTimeString('en-GB'); document.getElementById('tokyoStatus').innerText = sessionStatus(tokyo.getHours(), 9, 18); document.getElementById('londonStatus').innerText = sessionStatus(london.getHours(), 8, 17); document.getElementById('nyStatus').innerText = sessionStatus(ny.getHours(), 8, 17); } function isOverlap(londonHour, nyHour) { return (londonHour >= 13 && londonHour < 17 && nyHour >= 8 && nyHour < 12); } function updateClocks() { const now = new Date(); const uz = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Tashkent' })); const london = new Date(now.toLocaleString('en-US', 
 
-<!DOCTYPE html>
-<html lang="uz">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Gofforov Trading Dashboard</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #0f172a;
-      color: #e5e7eb;
-    }
-    header {
-      background: #020617;
-      padding: 16px;
-      text-align: center;
-      font-size: 20px;
-      font-weight: bold;
-      color: #38bdf8;
-    }
-    .container {
-      padding: 16px;
-      max-width: 900px;
-      margin: auto;
-    }
-    .card {
-      background: #020617;
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 16px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.5);
-    }
-    h2 {
-      margin-top: 0;
-      color: #38bdf8;
-    }
-    .session {
-      display: flex;
-      justify-content: space-between;
-      padding: 8px 0;
-      border-bottom: 1px solid #1e293b;
-    }
-    .session:last-child {
-      border-bottom: none;
-    }
-    footer {
-      text-align: center;
-      padding: 12px;
-      font-size: 14px;
-      color: #94a3b8;
-    }
-    .highlight {
-      color: #22c55e;
-      font-weight: bold;
-    }
-  </style>
-</head>
-<body>
-
-<header>
-  Gofforov Trading • Dashboard
-</header>
-
-<div class="container">
-
-  <div class="card">
-    <h2>🌍 Trading Sessions (UZT)</h2>
-    <div class="session">
-      <span>Tokyo</span><span>03:00 – 12:00</span>
-    </div>
-    <div class="session">
-      <span>London</span><span>11:00 – 20:00</span>
-    </div>
-    <div class="session">
-      <span>New York</span><span>16:00 – 01:00</span>
-    </div>
-  </div>
-
-  <div class="card">
-    <h2>🪙 Bozorlar</h2>
-    <p>✔ Oltin (Gold)</p>
-    <p>✔ Kumush (Silver)</p>
-    <p>✔ Neft (Oil)</p>
-    <p class="highlight">News asosida harakat</p>
-  </div>
-
-  <div class="card">
-    <h2>📰 Yangiliklar</h2>
-    <p>✔ Forex & Crypto News</p>
-    <p>✔ Gold / Oil ta’sir қилувчи хабарлар</p>
-    <p class="highlight">Live yangиланади (keyingi босқич)</p>
-  </div>
-
-</div>
-
-<footer>
-  © Gofforov Trading • UZT (UTC+5)
-</footer>
-
-</body>
-</html>
+'Europe/London' })); const ny = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' })); const tokyo = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Tokyo' })); document.getElementById('uz').innerText = uz.toLocaleTimeString('en-GB'); document.getElementById('london').innerText = london.toLocaleTimeString('en-GB'); document.getElementById('ny').innerText = ny.toLocaleTimeString('en-GB'); document.getElementById('tokyo').innerText = tokyo.toLocaleTimeString('en-GB'); document.getElementById('tokyoStatus').innerText = sessionStatus(tokyo.getHours(), 9, 18); document.getElementById('londonStatus').innerText = sessionStatus(london.getHours(), 8, 17); document.getElementById('nyStatus').innerText = sessionStatus(ny.getHours(), 8, 17); const overlap = isOverlap(london.getHours(), ny.getHours()); document.getElementById('overlapStatus').innerText = overlap ? '🟢 London–New York overlap (High volatility)' : '🔴 Hozir overlap yo‘q'; const nextSessionHour = london.getHours() < 8 ? 8 : (ny.getHours() < 8 ? 8 : 24); const diff = nextSessionHour - london.getHours(); document.getElementById('countdown').innerText = 'Keyingi фаол сессияга тахминан ' + diff + ' соат'; } setInterval(updateClocks, 1000); updateClocks();
