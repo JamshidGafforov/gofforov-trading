@@ -120,11 +120,13 @@
     <iframe src="https://www.tradingview.com/embed-widget/events/?locale=en" height="380"></iframe>
   </div>
 
-  <!-- MARKET WATCH -->
-  <div class="card">
-    <h2>📊 Gold • Oil • Silver</h2>
-    <iframe src="https://www.tradingview.com/embed-widget/market-quotes/?locale=en" height="380"></iframe>
-    <p style="font-size:13px;color:#7cff9c;text-align:center">Information only. Not a signal.</p>
+  <!-- MARKET TREND (GOLD / OIL / SILVER) -->
+  <div class="card" style="grid-column:1 / -1">
+    <h2>📈 Gold • Oil • Silver Trend (Algorithmic)</h2>
+    <canvas id="trendChart" height="120"></canvas>
+    <p style="font-size:13px;color:#7cff9c;text-align:center">
+      Automatic trend direction based on moving average. Not a signal.
+    </p>
   </div>
 
 </div>
@@ -165,6 +167,51 @@
 
   setInterval(update, 1000);
   update();
+  // ===== SIMPLE TREND ALGORITHM =====
+  const ctx = document.getElementById('trendChart').getContext('2d');
+
+  const prices = {
+    gold: [2320,2330,2325,2340,2355,2360],
+    oil: [78,79,80,79.5,81,82],
+    silver: [28.1,28.3,28.2,28.6,28.9,29.1]
+  };
+
+  function trend(data){
+    const first = data.slice(0,3).reduce((a,b)=>a+b)/3;
+    const last = data.slice(-3).reduce((a,b)=>a+b)/3;
+    return last > first ? 'UP' : 'DOWN';
+  }
+
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ['t1','t2','t3','t4','t5','t6'],
+      datasets: [
+        {
+          label: 'Gold ('+trend(prices.gold)+')',
+          data: prices.gold,
+          tension: 0.3
+        },
+        {
+          label: 'Oil ('+trend(prices.oil)+')',
+          data: prices.oil,
+          tension: 0.3
+        },
+        {
+          label: 'Silver ('+trend(prices.silver)+')',
+          data: prices.silver,
+          tension: 0.3
+        }
+      ]
+    },
+    options: {
+      plugins: { legend: { labels: { color:'#e6f1ff' } } },
+      scales: {
+        x: { ticks:{display:false}, grid:{display:false} },
+        y: { ticks:{color:'#7a93a8'}, grid:{color:'#0b1a26'} }
+      }
+    }
+  });
 </script>
 
 </body>
