@@ -30,7 +30,7 @@
       margin: auto;
       padding: 18px;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
       gap: 18px;
     }
 
@@ -56,39 +56,35 @@
       font-size: 16px;
     }
 
-    .up { color: #4ade80; font-weight: 700; }
-    .down { color: #f87171; font-weight: 700; }
-
     .session {
-      padding: 12px;
-      border-radius: 12px;
-      margin-bottom: 10px;
-      background: rgba(255,255,255,0.03);
+      padding: 14px;
+      border-radius: 14px;
+      margin-bottom: 12px;
+      background: rgba(255,255,255,0.04);
       border: 1px solid #0b1a26;
     }
 
     .open { color: #4ade80; font-weight: 700; }
     .closed { color: #f87171; font-weight: 700; }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 14px;
-    }
-
-    th, td {
-      padding: 8px;
-      border-bottom: 1px solid #0b1a26;
-      text-align: left;
-    }
-
-    th { color: #6fd2ff; font-weight: 600; }
-
     footer {
       text-align: center;
       padding: 16px;
       font-size: 13px;
       color: #7a93a8;
+    }
+
+    a.button {
+      display: block;
+      text-align: center;
+      padding: 14px;
+      margin-top: 10px;
+      border-radius: 14px;
+      background: linear-gradient(180deg, #0b3a55, #07283d);
+      color: #d9f2ff;
+      text-decoration: none;
+      font-weight: 700;
+      border: 1px solid #0b4a66;
     }
   </style>
 </head>
@@ -101,7 +97,7 @@
 
 <div class="container">
 
-  <!-- LIVE CLOCKS -->
+  <!-- GLOBAL TIME -->
   <div class="card">
     <h2>🌍 Global Time</h2>
     <div class="row"><span>🇺🇿 Uzbekistan</span><span id="uz"></span></div>
@@ -110,48 +106,28 @@
     <div class="row"><span>🇺🇸 New York</span><span id="ny"></span></div>
   </div>
 
-  <!-- SESSIONS -->
+  <!-- TRADING SESSIONS -->
   <div class="card">
     <h2>🕒 Trading Sessions</h2>
 
-    <div class="session">
-      <div class="row"><strong>Tokyo</strong><span id="tokyoStatus"></span></div>
-    </div>
-
-    <div class="session">
-      <div class="row"><strong>London</strong><span id="londonStatus"></span></div>
-    </div>
-
-    <div class="session">
-      <div class="row"><strong>New York</strong><span id="nyStatus"></span></div>
-    </div>
-
-    <div class="session">
-      <div class="row"><strong>London + New York</strong><span id="overlap"></span></div>
-    </div>
+    <div class="session"><div class="row"><strong>Tokyo</strong><span id="tokyoStatus"></span></div></div>
+    <div class="session"><div class="row"><strong>London</strong><span id="londonStatus"></span></div></div>
+    <div class="session"><div class="row"><strong>New York</strong><span id="nyStatus"></span></div></div>
+    <div class="session"><div class="row"><strong>London + New York</strong><span id="overlap"></span></div></div>
   </div>
 
-  <!-- ALGORITHMIC TREND -->
+  <!-- REAL PRICES -->
   <div class="card">
-    <h2>📈 Gold • Oil • Silver (Algorithmic Trend)</h2>
-
-    <div class="row"><span>🟡 Gold</span><span id="gold"></span></div>
-    <div class="row"><span>🛢 Oil</span><span id="oil"></span></div>
-    <div class="row"><span>⚪ Silver</span><span id="silver"></span></div>
-
-    <p style="margin-top:14px;font-size:13px;color:#7cff9c">
-      Moving-average based trend direction. Not a signal.
-    </p>
+    <h2>💰 Real Market Prices</h2>
+    <iframe src="https://www.tradingview.com/embed-widget/ticker-tape/?symbols=%5B%7B%22proName%22%3A%22OANDA%3AXAUUSD%22%2C%22title%22%3A%22Gold%22%7D%2C%7B%22proName%22%3A%22TVC%3AUSOIL%22%2C%22title%22%3A%22Oil%22%7D%2C%7B%22proName%22%3A%22OANDA%3AXAGUSD%22%2C%22title%22%3A%22Silver%22%7D%2C%7B%22proName%22%3A%22TVC%3ADXY%22%2C%22title%22%3A%22Dollar Index%22%7D%5D&showSymbolLogo=true&isTransparent=true&displayMode=adaptive&locale=en" height="90" style="width:100%;border:none"></iframe>
+    <p style="margin-top:12px;font-size:13px;color:#7cff9c">Real prices with direction arrows. No signals.</p>
   </div>
 
-  <!-- TRADER JOURNAL -->
+  <!-- JOURNAL LINK -->
   <div class="card">
     <h2>📒 Trader Journal</h2>
-    <table>
-      <tr><th>Date</th><th>Asset</th><th>Reason</th><th>Result</th></tr>
-      <tr><td>—</td><td>—</td><td>—</td><td>—</td></tr>
-      <tr><td>—</td><td>—</td><td>—</td><td>—</td></tr>
-    </table>
+    <p style="font-size:14px;color:#9bb7cc">Personal trading journal. Stored locally in your browser.</p>
+    <a class="button" href="journal.html">Open Trader Journal</a>
   </div>
 
 </div>
@@ -169,12 +145,6 @@
     return hour >= start && hour < end
       ? '<span class="open">OPEN</span>'
       : '<span class="closed">CLOSED</span>';
-  }
-
-  function trend() {
-    return Math.random() > 0.5
-      ? '<span class="up">▲ UP</span>'
-      : '<span class="down">▼ DOWN</span>';
   }
 
   function update() {
@@ -198,10 +168,6 @@
     document.getElementById('overlap').innerHTML = overlap
       ? '<span class="open">HIGH VOLATILITY</span>'
       : '<span class="closed">—</span>';
-
-    document.getElementById('gold').innerHTML = trend();
-    document.getElementById('oil').innerHTML = trend();
-    document.getElementById('silver').innerHTML = trend();
   }
 
   setInterval(update, 1000);
