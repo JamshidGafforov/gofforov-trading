@@ -92,7 +92,7 @@
     <div class="row"><span>⚪ Silver</span><span id="silver"></span></div>
   </div>  <div class="card">
     <h2>📰 Market News</h2>
-    <div id="news">Loading news...</div>
+    <ul id="news"><li>Gold steady ahead of US data</li><li>Oil reacts to OPEC comments</li><li>Dollar index holds key level</li></ul>
   </div>  <div class="card">
     <h2>📒 Trader Journal</h2>
     <select id="asset">
@@ -119,10 +119,17 @@ function update(){
 setInterval(update,1000); update();
 
 function addTrade(){
- const t=journal.insertRow(-1);
- t.insertCell(0).innerText=asset.value;
- t.insertCell(1).innerText=reason.value;
- t.insertCell(2).innerText=result.value;
+ const data=JSON.parse(localStorage.getItem('journal')||'[]');
+ data.push({asset:asset.value,reason:reason.value,result:result.value});
+ localStorage.setItem('journal',JSON.stringify(data));
+ renderJournal();
+ reason.value=''; result.value='';
 }
+function renderJournal(){
+ journal.innerHTML='<tr><th>Asset</th><th>Reason</th><th>Result</th></tr>';
+ const data=JSON.parse(localStorage.getItem('journal')||'[]');
+ data.forEach(d=>{const r=journal.insertRow(-1);r.insertCell(0).innerText=d.asset;r.insertCell(1).innerText=d.reason;r.insertCell(2).innerText=d.result;});
+}
+renderJournal();
 </script></body>
 </html>
